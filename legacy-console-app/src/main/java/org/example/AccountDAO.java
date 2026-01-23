@@ -25,7 +25,7 @@ public class AccountDAO {
             int rowsAffected = stmt.executeUpdate(); // Return wenne kee denek add unada kiyala
 
             if (rowsAffected > 0) {
-                System.out.println("✅ Account Created Successfully!");
+                System.out.println(" Account Created Successfully!");
             }
 
         } catch (SQLException e) {
@@ -48,9 +48,9 @@ public class AccountDAO {
             if (rs.next()) {
                 String name = rs.getString("holder_name");
                 double bal = rs.getDouble("balance");
-                System.out.println("📄 Account Found: " + name + " | Balance: " + bal);
+                System.out.println(" Account Found: " + name + " | Balance: " + bal);
             } else {
-                System.out.println("❌ Account not found!");
+                System.out.println("Account not found!");
             }
 
         } catch (SQLException e) {
@@ -79,11 +79,11 @@ public class AccountDAO {
 
             // 2. CHECK KARANAWA DEKAMA HARI GIYADA KIYALA
             if (rows1 > 0 && rows2 > 0) {
-                conn.commit(); // ✅ Okkoma hari, dan save karanna.
-                System.out.println("💰 Transfer Successful!");
+                conn.commit(); //  Okkoma hari, dan save karanna.
+                System.out.println(" Transfer Successful!");
             } else {
-                conn.rollback(); // ❌ Mokak hari awul, kalin thibba thathwetama yanna.
-                System.out.println("⚠️ Transfer Failed! Money Rolled Back.");
+                conn.rollback(); //  Mokak hari awul, kalin thibba thathwetama yanna.
+                System.out.println(" Transfer Failed! Money Rolled Back.");
             }
 
         } catch (SQLException e) {
@@ -109,9 +109,9 @@ public class AccountDAO {
             int rows = stmt.executeUpdate(); // Update karanna
 
             if (rows > 0) {
-                System.out.println("✅ " + amount + " Deposited Successfully!");
+                System.out.println(" " + amount + " Deposited Successfully!");
             } else {
-                System.out.println("❌ Deposit Failed! Account ID not found.");
+                System.out.println(" Deposit Failed! Account ID not found.");
             }
 
         } catch (SQLException e) {
@@ -133,12 +133,12 @@ public class AccountDAO {
             int rows = stmt.executeUpdate();
 
             if (rows > 0) {
-                System.out.println("✅ " + amount + " Withdrawn Successfully!");
+                System.out.println( + amount + " Withdrawn Successfully!");
             } else {
                 // Rows update une nattam ekata hethu 2k thiyenna puluwan:
                 // 1. Account eka na.
                 // 2. Salli madi.
-                System.out.println("❌ Withdraw Failed! (Insufficient Balance or Invalid ID)");
+                System.out.println("Withdraw Failed! (Insufficient Balance or Invalid ID)");
             }
 
         } catch (SQLException e) {

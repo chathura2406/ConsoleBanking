@@ -19,13 +19,13 @@ public class DatabaseConnection {
 
             // Connection eka hadanna
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("✅ Database Connected Successfully!");
+            System.out.println(" Database Connected Successfully!");
 
         } catch (ClassNotFoundException e) {
-            System.out.println("❌ Driver not found! (Library eka hariyata add wela na)");
+            System.out.println(" Driver not found! (Library eka hariyata add wela na)");
             e.printStackTrace();
         } catch (SQLException e) {
-            System.out.println("❌ Connection Failed! (Database name/user/pass waradi)");
+            System.out.println(" Connection Failed! (Database name/user/pass waradi)");
             e.printStackTrace();
         }
         return connection;

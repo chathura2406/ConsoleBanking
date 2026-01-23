@@ -33,19 +33,24 @@ public class Main {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("❌ Connection lost");
+            System.out.println(" Connection lost");
         }
 
         AccountDAO dao = new AccountDAO();
+        dao.createAccount("S004", "Sandun", 2000, "savings");
+        dao.createAccount("S002", "kapila", 3000, "savings");
+        dao.createAccount("S003", "tekla", 4000, "savings");
+        dao.transferMoney("S002", "S003", 100);
+    
 
 // 1. Salli 5000k danna
-        dao.deposit("S001", 5000.0);
+        dao.deposit("S004", 5000.0);
 
 // 2. Salli 2000k ganna
-        dao.withdraw("S001", 2000.0);
+        dao.withdraw("S004", 2000.0);
 
 // 3. Balance eka check karanna
-        dao.getAccountDetails("S001");
+        dao.getAccountDetails("S004");
 
     }
 }
