@@ -6,7 +6,7 @@ import com.banking.repository.AccountRepository;
 import com.banking.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.banking.dto.AccountDto;
 import java.time.LocalDateTime;
 
 @Service // Spring Boot ta kiyanawa meka "Service" ekak kiyala
@@ -65,4 +65,25 @@ public class AccountService {
 
         return savedAccount;
     }
+
+    // --- Create Account with DTO ---
+    public AccountDto createAccount(AccountDto accountDto) {
+
+        // 1. DTO eka Entity ekak bawata harawanna oni (Data copy karanawa)
+        Account account = new Account();
+        account.setAccountHolderName(accountDto.getAccountHolderName());
+        account.setBalance(accountDto.getBalance());
+
+        // 2. Database ekata Save karanawa
+        Account savedAccount = accountRepository.save(account);
+
+        // 3. Save karapu Entity eka aye DTO ekak bawata harawala eliyata denawa
+        AccountDto savedDto = new AccountDto();
+        savedDto.setId(savedAccount.getId());
+        savedDto.setAccountHolderName(savedAccount.getAccountHolderName());
+        savedDto.setBalance(savedAccount.getBalance());
+
+        return savedDto;
+    }
+
 }

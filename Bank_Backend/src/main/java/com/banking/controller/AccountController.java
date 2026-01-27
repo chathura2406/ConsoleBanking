@@ -6,7 +6,9 @@ import com.banking.repository.AccountRepository;
 import com.banking.repository.TransactionRepository;
 import com.banking.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.banking.dto.AccountDto;
 
 import java.util.List;
 import java.util.Map;
@@ -26,11 +28,12 @@ public class AccountController {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    // --- Create Account API ---
+    // --- Create Account API (Updated) ---
     @PostMapping
-    public Account createAccount(@RequestBody Account account) {
+    public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
 
-        return accountRepository.save(account);
+        // Kelinma Service ekata DTO eka denawa. Service eken DTO ekakma denawa.
+        return ResponseEntity.ok(accountService.createAccount(accountDto));
     }
 
     // --- Get Account API  ---
