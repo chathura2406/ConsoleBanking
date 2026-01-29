@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.banking.dto.AccountDto;
 import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service // Spring Boot ta kiyanawa meka "Service" ekak kiyala
+@Service
 public class AccountService {
 
     @Autowired
@@ -18,8 +19,9 @@ public class AccountService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    // --- DEPOSIT LOGIC ---
-    public Account deposit(Long id, double amount) {
+    // --- DEPOSIT LOGIC (Updated to return DTO) ---
+    @Transactional
+    public AccountDto deposit(Long id, double amount) {
         // 1. Account eka gannawa
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -29,20 +31,26 @@ public class AccountService {
         account.setBalance(total);
         Account savedAccount = accountRepository.save(account);
 
-        // 3. TRANSACTION RECORD EKAK HADANAWA (Meka thama aluth kalla)
+        // 3. Transaction Record
         Transaction transaction = new Transaction();
         transaction.setAccountId(id);
         transaction.setAmount(amount);
-        transaction.setTransactionType("DEPOSIT"); // Type eka save karanawa
-        transaction.setTimestamp(LocalDateTime.now()); // Current time eka
+        transaction.setTransactionType("DEPOSIT");
+        transaction.setTimestamp(LocalDateTime.now());
+        transactionRepository.save(transaction);
 
-        transactionRepository.save(transaction); // Transaction Table ekata danawa
+        // 4. CONVERT TO DTO (Meka thama aluth kalla)
+        AccountDto accountDto = new AccountDto();
+        accountDto.setId(savedAccount.getId());
+        accountDto.setAccountHolderName(savedAccount.getAccountHolderName());
+        accountDto.setBalance(savedAccount.getBalance());
 
-        return savedAccount;
+        return accountDto; // Entity eka nemei, DTO eka yawanawa
     }
 
-    // --- WITHDRAW LOGIC ---
-    public Account withdraw(Long id, double amount) {
+    // --- WITHDRAW LOGIC (Updated to return DTO) ---
+    @Transactional
+    public AccountDto withdraw(Long id, double amount) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
@@ -54,30 +62,31 @@ public class AccountService {
         account.setBalance(total);
         Account savedAccount = accountRepository.save(account);
 
-        // Transaction Record for Withdraw
+        // Transaction Record
         Transaction transaction = new Transaction();
         transaction.setAccountId(id);
         transaction.setAmount(amount);
         transaction.setTransactionType("WITHDRAW");
         transaction.setTimestamp(LocalDateTime.now());
-
         transactionRepository.save(transaction);
 
-        return savedAccount;
+        // 4. CONVERT TO DTO
+        AccountDto accountDto = new AccountDto();
+        accountDto.setId(savedAccount.getId());
+        accountDto.setAccountHolderName(savedAccount.getAccountHolderName());
+        accountDto.setBalance(savedAccount.getBalance());
+
+        return accountDto;
     }
 
-    // --- Create Account with DTO ---
+    // --- Create Account (Meka kalin wagema thiyanna) ---
     public AccountDto createAccount(AccountDto accountDto) {
-
-        // 1. DTO eka Entity ekak bawata harawanna oni (Data copy karanawa)
         Account account = new Account();
         account.setAccountHolderName(accountDto.getAccountHolderName());
         account.setBalance(accountDto.getBalance());
 
-        // 2. Database ekata Save karanawa
         Account savedAccount = accountRepository.save(account);
 
-        // 3. Save karapu Entity eka aye DTO ekak bawata harawala eliyata denawa
         AccountDto savedDto = new AccountDto();
         savedDto.setId(savedAccount.getId());
         savedDto.setAccountHolderName(savedAccount.getAccountHolderName());
@@ -85,5 +94,4 @@ public class AccountService {
 
         return savedDto;
     }
-
 }
