@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.banking.dto.AccountDto;
 import java.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
+import com.banking.entity.AccountType;
+
 
 @Service
 public class AccountService {
@@ -85,6 +87,8 @@ public class AccountService {
         account.setAccountHolderName(accountDto.getAccountHolderName());
         account.setBalance(accountDto.getBalance());
 
+        account.setAccountType(AccountType.valueOf(accountDto.getAccountType().toUpperCase()));
+
         Account savedAccount = accountRepository.save(account);
 
         AccountDto savedDto = new AccountDto();
@@ -92,6 +96,7 @@ public class AccountService {
         savedDto.setAccountHolderName(savedAccount.getAccountHolderName());
         savedDto.setBalance(savedAccount.getBalance());
 
-        return savedDto;
-    }
+        savedDto.setAccountType(savedAccount.getAccountType().toString());
+
+        return savedDto;}
 }

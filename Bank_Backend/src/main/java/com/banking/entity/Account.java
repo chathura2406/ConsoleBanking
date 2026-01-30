@@ -20,4 +20,7 @@ public class Account {
 
     private double balance;
 
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
 }
