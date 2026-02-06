@@ -3,12 +3,15 @@ package com.banking.controller;
 import com.banking.entity.Account;
 import com.banking.entity.Transaction;
 import com.banking.repository.AccountRepository;
+import com.banking.repository.IdempotencyRepository;
 import com.banking.repository.TransactionRepository;
 import com.banking.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.banking.dto.AccountDto;
+import com.banking.entity.IdempotencyLog;
+import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,9 @@ public class AccountController {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private IdempotencyRepository idempotencyRepository;
+
     // --- Create Account API (Updated) ---
     @PostMapping
     public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
@@ -45,10 +51,23 @@ public class AccountController {
     }
 
     // --- Deposit ---
+    // --- Deposit API with Idempotency ---
     @PutMapping("/{id}/deposit")
-    public ResponseEntity<AccountDto> deposit(@PathVariable Long id, @RequestBody Map<String, Double> request) {
+    public ResponseEntity<?> deposit(
+            @PathVariable Long id,
+            @RequestBody Map<String, Double> request,
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey) {
+        if (idempotencyKey != null && idempotencyRepository.existsById(idempotencyKey)) {
+            return ResponseEntity.badRequest().body("Duplicate Request! This transaction is already processed.");
+        }
         Double amount = request.get("amount");
-        AccountDto accountDto = accountService.deposit(id, amount); // Dan enne DTO ekak
+        AccountDto accountDto = accountService.deposit(id, amount);
+
+        if (idempotencyKey != null) {
+            IdempotencyLog log = new IdempotencyLog(idempotencyKey, 200L, LocalDateTime.now());
+            idempotencyRepository.save(log);
+        }
+
         return ResponseEntity.ok(accountDto);
     }
 
