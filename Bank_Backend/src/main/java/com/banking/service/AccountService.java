@@ -54,8 +54,7 @@ public class AccountService {
     @Transactional
     public AccountDto withdraw(Long id, double amount) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-
+                .orElseThrow(() -> new RuntimeException("Account does not exist with ID: " + id));
         if (account.getBalance() < amount) {
             throw new RuntimeException("Insufficient Balance");
         }
