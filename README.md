@@ -67,5 +67,5 @@ This project demonstrates a full **DevOps & QA lifecycle**, including Containeri
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone [https://github.com/yourusername/neobank-backend.git](https://github.com/yourusername/neobank-backend.git)
-cd neobank-backend
+git clone [https://github.com/chathura2406/ConsoleBanking.git]
+cd Bank_Backend
