@@ -4,12 +4,18 @@ import com.banking.entity.Account;
 import com.banking.entity.Transaction;
 import com.banking.repository.AccountRepository;
 import com.banking.repository.TransactionRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.banking.dto.AccountDto;
 import java.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 import com.banking.entity.AccountType;
+import com.banking.entity.Transaction;
+import com.banking.dto.TransactionDto;
 
 
 @Service
@@ -97,5 +103,30 @@ public class AccountService {
 
         savedDto.setAccountType(savedAccount.getAccountType().toString());
 
-        return savedDto;}
+        return savedDto;
+    }
+
+    public Page<TransactionDto> getAccountTransactions(Long accountId, int page, int size) {
+
+        // 1. Account eka thiyenawada balanawa
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account does not exist"));
+
+        // 2. Pagination saha Sorting hadanawa (Aluthma ewa udinma enna 'timestamp' eken DESC karanawa)
+        Pageable pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());
+
+        // 3. Database eken data gannawa
+        Page<Transaction> transactions = transactionRepository.findByAccountId(accountId, pageable);
+
+        // 4. Entity eka DTO ekata convert karala gannawa
+        return transactions.map(transaction -> {
+            TransactionDto dto = new TransactionDto();
+            dto.setId(transaction.getId());
+            dto.setAccountId(transaction.getAccountId());
+            dto.setAmount(transaction.getAmount());
+            dto.setTransactionType(transaction.getTransactionType());
+            dto.setTimestamp(transaction.getTimestamp());
+            return dto;
+        });
+    }
 }

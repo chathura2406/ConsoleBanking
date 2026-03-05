@@ -1,5 +1,6 @@
 package com.banking.controller;
 
+import com.banking.dto.TransactionDto;
 import com.banking.entity.Account;
 import com.banking.entity.Transaction;
 import com.banking.repository.AccountRepository;
@@ -7,6 +8,7 @@ import com.banking.repository.IdempotencyRepository;
 import com.banking.repository.TransactionRepository;
 import com.banking.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.banking.dto.AccountDto;
@@ -94,10 +96,14 @@ public class AccountController {
     }
 
     // --- Get Account Statement (Transactions) ---
-    @GetMapping("/{id}/transactions") // URL: /api/accounts/1/transactions
-    public List<Transaction> getAccountTransactions(@PathVariable Long id) {
-
-        return transactionRepository.findByAccountId(id);
+    @GetMapping("/{id}/transactions")
+    public ResponseEntity<Page<TransactionDto>> getAccountTransactions(
+            @PathVariable("id") Long id,
+            @RequestParam(value = "page", defaultValue = "0") int page, // Default page 0 (Palamu pituwa)
+            @RequestParam(value = "size", defaultValue = "5") int size  // Default ekaparakata data 5i
+    ) {
+        Page<TransactionDto> transactions = accountService.getAccountTransactions(id, page, size);
+        return ResponseEntity.ok(transactions);
     }
 
 
