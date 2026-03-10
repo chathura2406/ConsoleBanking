@@ -7,6 +7,7 @@ import com.banking.repository.AccountRepository;
 import com.banking.repository.IdempotencyRepository;
 import com.banking.repository.TransactionRepository;
 import com.banking.service.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class AccountController {
 
     // --- Create Account API (Updated) ---
     @PostMapping
-    public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<AccountDto> createAccount(@Valid @RequestBody AccountDto accountDto) {
 
         // Kelinma Service ekata DTO eka denawa. Service eken DTO ekakma denawa.
         return ResponseEntity.ok(accountService.createAccount(accountDto));
